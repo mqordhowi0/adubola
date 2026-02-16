@@ -80,24 +80,36 @@ function App() {
   return (
     <div className="h-screen w-screen bg-slate-950 text-slate-100 font-sans flex flex-col overflow-hidden">
       <style>{styles}</style>
-      
-      {/* HEADER UTAMA APLIKASI */}
       <header className="shrink-0 bg-slate-900 border-b border-slate-800 p-3 shadow-lg z-20 relative">
          <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
              <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
-                <h1 className="text-xl md:text-2xl font-black text-white tracking-tighter flex items-center gap-2">
-                    ⚽ AduBola <span className="text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded text-xs md:text-sm border border-emerald-400/20">Manager</span>
-                </h1>
-                <div className={`flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-all
-                    ${comp.isSaved ? 'bg-emerald-900/20 border-emerald-500/30 text-emerald-400' : 'bg-amber-900/20 border-amber-500/30 text-amber-400 animate-pulse'}`}>
-                    <span className={`w-2 h-2 rounded-full ${comp.isSaved ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                    {comp.isSaved ? 'All Saved' : 'Unsaved Changes'}
+                {/* LOGO & JUDUL */}
+                <div className="flex items-center gap-3">
+                    <img src="/image.png" alt="Logo" className="h-10 w-auto object-contain drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                    <h1 className="text-xl md:text-2xl font-black text-white tracking-tighter flex items-center gap-2">
+                        AduBola <span className="text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded text-xs md:text-sm border border-emerald-400/20">Manager</span>
+                    </h1>
                 </div>
+                
+                {/* --- PERBAIKAN: Status Badge hanya muncul saat mode ACTIVE --- */}
+                {comp.mode === 'active' && (
+                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-all
+                        ${comp.isSaved ? 'bg-emerald-900/20 border-emerald-500/30 text-emerald-400' : 'bg-amber-900/20 border-amber-500/30 text-amber-400 animate-pulse'}`}>
+                        <span className={`w-2 h-2 rounded-full ${comp.isSaved ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                        {comp.isSaved ? 'All Saved' : 'Unsaved Changes'}
+                    </div>
+                )}
              </div>
+             
              <div className="flex flex-wrap justify-center gap-2">
                 <button onClick={comp.saveData} className="px-4 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg font-bold hover:bg-blue-600 hover:text-white text-xs transition flex items-center gap-2">💾 SAVE</button>
                 <label className="px-4 py-1.5 bg-slate-800 text-slate-400 border border-slate-700 rounded-lg font-bold hover:bg-slate-700 hover:text-white text-xs transition cursor-pointer flex items-center gap-2">📂 LOAD <input type="file" hidden onChange={comp.loadData} /></label>
-                {comp.mode === 'active' && <button onClick={comp.reset} className="px-4 py-1.5 bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg font-bold hover:bg-red-600 hover:text-white text-xs transition flex items-center gap-2">🛑 RESET</button>}
+                {/* Tombol Reset hanya muncul saat active */}
+                {comp.mode === 'active' && (
+                    <button onClick={() => {if(confirm("Yakin reset semua? Data hilang lho!")) comp.reset()}} className="px-4 py-1.5 bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg font-bold hover:bg-red-600 hover:text-white text-xs transition flex items-center gap-2">
+                        🛑 RESET
+                    </button>
+                )}
              </div>
          </div>
       </header>
@@ -105,7 +117,6 @@ function App() {
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full max-w-[1800px] mx-auto p-2 md:p-4 lg:p-6">
             {comp.mode === 'setup' ? (
-                // --- SETUP MODE ---
                 <div className="h-full overflow-y-auto custom-scrollbar pb-20">
                     <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto mt-4 md:mt-10">
                         <div className="lg:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
@@ -129,7 +140,6 @@ function App() {
                         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 h-fit shadow-xl">
                             <h2 className="font-bold text-white text-lg mb-4">Pengaturan</h2>
                             
-                            {/* INPUT NAMA KOMPETISI */}
                             <div className="mb-6">
                                 <label className="text-[10px] font-bold text-slate-500 mb-1 block uppercase tracking-wider">Nama Liga / Cup</label>
                                 <input 
@@ -165,14 +175,10 @@ function App() {
                     </div>
                 </div>
             ) : (
-                // --- ACTIVE MODE ---
                 <div className="grid lg:grid-cols-3 gap-4 lg:gap-6 h-full grid-rows-[55%_45%] lg:grid-rows-1">
-                     
-                     {/* KIRI: VISUALISASI (Bracket/League) */}
                      <div className="lg:col-span-2 h-full overflow-hidden flex flex-col min-h-0 animate-fade-in">
                         {comp.compType === 'league' ? (
-                            <div className="flex-1 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col">
-                                {/* HEADER KHUSUS LIGA (Agar konsisten) */}
+                            <div className="flex-1 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden p-1 flex flex-col">
                                 <div className="flex justify-between items-center p-4 bg-slate-950/50 border-b border-white/5 z-10">
                                     <h2 className="text-lg font-black text-emerald-400 uppercase tracking-widest truncate">{comp.competitionName}</h2>
                                     <span className="text-xs font-bold text-slate-500 px-3 py-1 bg-slate-900 rounded-full border border-slate-700">STANDINGS</span>
@@ -182,19 +188,12 @@ function App() {
                                 </div>
                             </div>
                         ) : (
-                            // WRAPPER BRACKET DENGAN HEADER BARU
                             <div ref={bracketContainerRef} className={`relative group bg-slate-900 border border-slate-800 shadow-xl overflow-hidden flex flex-col h-full transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-50 rounded-none' : 'rounded-2xl'}`}>
-                                
-                                {/* HEADER TOOLBAR (SEJAJAR DENGAN NAMA) */}
                                 <div className="flex justify-between items-center p-4 bg-slate-950/80 backdrop-blur-md border-b border-white/5 z-20 shrink-0">
-                                    {/* Nama Kompetisi */}
                                     <h2 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 uppercase tracking-widest truncate max-w-[50%]">
                                         {comp.competitionName}
                                     </h2>
-
-                                    {/* Tombol Kontrol */}
                                     <div className="flex items-center gap-2">
-                                         {/* Zoom Controls (Hanya saat Fullscreen) */}
                                          {isFullscreen && (
                                              <div className="flex items-center bg-slate-900 rounded-full border border-slate-700 mr-2 p-0.5">
                                                 <button onClick={() => handleZoom(-0.2)} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-full font-bold text-sm">－</button>
@@ -202,13 +201,9 @@ function App() {
                                                 <button onClick={() => handleZoom(0.2)} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-full font-bold text-sm">＋</button>
                                              </div>
                                          )}
-                                         
-                                         {/* Fullscreen Toggle */}
                                          <button onClick={toggleFullscreen} className="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full hover:bg-slate-700 hover:text-white transition font-bold border border-slate-600 flex items-center gap-1 shadow-sm">
                                             {isFullscreen ? '↙ MINIMIZE' : '↗ FULLSCREEN'}
                                          </button>
-                                         
-                                         {/* Undo */}
                                          {comp.history.length > 0 && !isFullscreen && (
                                              <button onClick={comp.undoLastRound} className="text-xs text-white px-3 py-1.5 rounded-full bg-slate-700 hover:bg-slate-600 transition font-bold border border-slate-500 shadow-sm ml-1">
                                                  ↩ UNDO
@@ -216,16 +211,12 @@ function App() {
                                          )}
                                     </div>
                                 </div>
-
-                                {/* Konten Bracket (Akan otomatis ada di bawah header karena flex-col) */}
                                 <div className="flex-1 overflow-hidden p-1">
                                     <Bracket matches={comp.matches} teams={comp.teams} settings={comp.settings} cupWinner={comp.cupWinner} updateScore={comp.updateScore} zoomLevel={zoomLevel} />
                                 </div>
                             </div>
                         )}
                      </div>
-
-                     {/* KANAN: INPUT LIST */}
                      <div className="bg-slate-900 rounded-2xl border border-slate-800 h-full flex flex-col shadow-xl overflow-hidden min-h-0 animate-fade-in" style={{animationDelay: '0.1s'}}>
                         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950 z-10 shrink-0">
                             <h3 className="font-bold text-white text-sm">INPUT SKOR</h3>
